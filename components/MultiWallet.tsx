@@ -55,7 +55,7 @@ export default function MultiWallet({ mnemonic }: WalletProps) {
         <CardTitle>Create New Wallet</CardTitle>
         <CardDescription>Choose the type of wallet to create</CardDescription>
       </CardHeader>
-      <CardContent className="flex space-x-4">
+      <CardContent className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
         <Button onClick={() => handleCreateWallet("ethereum")}>
           Create Ethereum Wallet
         </Button>
@@ -65,9 +65,9 @@ export default function MultiWallet({ mnemonic }: WalletProps) {
       </CardContent>
       <CardFooter>
         <Tabs defaultValue="ethereum" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="ethereum">Ethereum Wallets</TabsTrigger>
-            <TabsTrigger value="solana">Solana Wallets</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 ">
+            <TabsTrigger value="ethereum">Ethereum</TabsTrigger>
+            <TabsTrigger value="solana">Solana</TabsTrigger>
           </TabsList>
           <TabsContent value="ethereum">
             {wallets

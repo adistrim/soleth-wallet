@@ -10,11 +10,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { generateAndSaveSeed, loadSavedSeed } from "@/lib/seedUtils";
 import EthWallet from "./MultiWallet";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import Header from "./Header";
+import Footer from "./Footer";
 
 export default function HomePage() {
   const [mnemonic, setMnemonic] = useState<string>("");
@@ -48,50 +51,60 @@ export default function HomePage() {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl">
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Wallet Seed Management</CardTitle>
-          <CardDescription>Generate or enter your seed phrase</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Textarea
-            value={inputMnemonic}
-            onChange={handleInputChange}
-            placeholder="Enter your seed phrase here or leave it empty to generate new"
-            className="mb-4"
-          />
-          <Button onClick={handleSaveSeed} className="w-full">
-            Save/Generate Seed
-          </Button>
-        </CardContent>
-        <CardFooter>
-          {mnemonic && (
-            <Alert>
-              <AlertTitle>Current Seed Phrase</AlertTitle>
-              <AlertDescription>{mnemonic}</AlertDescription>
-            </Alert>
-          )}
-        </CardFooter>
-      </Card>
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <Header />
+      <main className="flex-grow container mx-auto p-6 max-w-4xl">
+        {showAlert && (
+          <Alert className="mb-6">
+            <AlertTitle>Success</AlertTitle>
+            <AlertDescription>
+              Seed phrase has been saved/generated successfully.
+            </AlertDescription>
+          </Alert>
+        )}
 
-      {showAlert && (
-        <Alert className="mb-4">
-          <AlertTitle>Success</AlertTitle>
-          <AlertDescription>
-            Seed phrase has been saved/generated successfully.
-          </AlertDescription>
-        </Alert>
-      )}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Seed Phrase Management</CardTitle>
+              <CardDescription>
+                Generate or enter your seed phrase
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={inputMnemonic}
+                onChange={handleInputChange}
+                placeholder="Enter your seed phrase here or leave it empty to generate new"
+                className="mb-4"
+              />
+              <Button onClick={handleSaveSeed} className="w-full">
+                Save/Generate Seed
+              </Button>
+            </CardContent>
+            {mnemonic && (
+              <CardFooter>
+                <Alert variant="default">
+                  <AlertTitle>Current Seed Phrase</AlertTitle>
+                  <AlertDescription className="break-all">
+                    {mnemonic}
+                  </AlertDescription>
+                </Alert>
+              </CardFooter>
+            )}
+          </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Multi-Wallet Management</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <EthWallet mnemonic={mnemonic} key={mnemonic} />
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Multi-Wallet Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <EthWallet mnemonic={mnemonic} key={mnemonic} />
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }
