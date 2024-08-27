@@ -1,5 +1,16 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   WalletInfo,
   createEthereumWallet,
@@ -23,13 +34,11 @@ export default function MultiWallet({ mnemonic }: WalletProps) {
     }
   }, []);
 
-  async function handleCreateEthereumWallet() {
-    const newWallet = await createEthereumWallet(mnemonic, currentIndex);
-    updateWallets(newWallet);
-  }
-
-  async function handleCreateSolanaWallet() {
-    const newWallet = await createSolanaWallet(mnemonic, currentIndex);
+  async function handleCreateWallet(type: "ethereum" | "solana") {
+    const newWallet =
+      type === "ethereum"
+        ? await createEthereumWallet(mnemonic, currentIndex)
+        : await createSolanaWallet(mnemonic, currentIndex);
     updateWallets(newWallet);
   }
 
@@ -41,30 +50,67 @@ export default function MultiWallet({ mnemonic }: WalletProps) {
   }
 
   return (
-    <>
-      <div className="flex">
-        <button
-          className="bg-[#497493] text-[#F5F5F5] rounded-md py-1 px-2 mr-2"
-          onClick={handleCreateEthereumWallet}
-        >
+    <Card>
+      <CardHeader>
+        <CardTitle>Create New Wallet</CardTitle>
+        <CardDescription>Choose the type of wallet to create</CardDescription>
+      </CardHeader>
+      <CardContent className="flex space-x-4">
+        <Button onClick={() => handleCreateWallet("ethereum")}>
           Create Ethereum Wallet
-        </button>
-        <button
-          className="bg-[#497493] text-[#F5F5F5] rounded-md py-1 px-2"
-          onClick={handleCreateSolanaWallet}
-        >
+        </Button>
+        <Button onClick={() => handleCreateWallet("solana")}>
           Create Solana Wallet
-        </button>
-      </div>
-      {wallets.map((wallet, index) => (
-        <div key={index} className="wallet-info">
-          <p>
-            Wallet {index + 1} - {wallet.type}
-          </p>
-          <p>Public Address: {wallet.address}</p>
-          <p>Private Key: {wallet.privateKey}</p>
-        </div>
-      ))}
-    </>
+        </Button>
+      </CardContent>
+      <CardFooter>
+        <Tabs defaultValue="ethereum" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="ethereum">Ethereum Wallets</TabsTrigger>
+            <TabsTrigger value="solana">Solana Wallets</TabsTrigger>
+          </TabsList>
+          <TabsContent value="ethereum">
+            {wallets
+              .filter((w) => w.type === "ethereum")
+              .map((wallet, index) => (
+                <WalletCard key={index} wallet={wallet} index={index} />
+              ))}
+          </TabsContent>
+          <TabsContent value="solana">
+            {wallets
+              .filter((w) => w.type === "solana")
+              .map((wallet, index) => (
+                <WalletCard key={index} wallet={wallet} index={index} />
+              ))}
+          </TabsContent>
+        </Tabs>
+      </CardFooter>
+    </Card>
+  );
+}
+
+function WalletCard({ wallet, index }: { wallet: WalletInfo; index: number }) {
+  return (
+    <Card className="mb-4">
+      <CardHeader>
+        <CardTitle>
+          {wallet.type} Wallet {index + 1}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Alert>
+          <AlertTitle>Public Address</AlertTitle>
+          <AlertDescription className="break-all">
+            {wallet.address}
+          </AlertDescription>
+        </Alert>
+        <Alert className="mt-2">
+          <AlertTitle>Private Key</AlertTitle>
+          <AlertDescription className="break-all">
+            {wallet.privateKey}
+          </AlertDescription>
+        </Alert>
+      </CardContent>
+    </Card>
   );
 }
