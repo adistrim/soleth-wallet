@@ -1,5 +1,5 @@
 "use client";
-import EthWallet from "./EthWallet";
+import EthWallet from "./MultiWallet";
 import { useState, useEffect, ChangeEvent } from "react";
 import { generateAndSaveSeed, loadSavedSeed } from "@/lib/seedUtils";
 
